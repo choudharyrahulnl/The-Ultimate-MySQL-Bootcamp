@@ -1,0 +1,92 @@
+# STORING TEXT
+
+# CHAR IS FASTER FOR FIXED LENGTH TEXT
+# EX STATE ABBREVIATIONS , YES/NO, ZIP CODES
+# OTHERWISE USE VARCHAR
+
+# WE WILL GET DATA TOO LONG FOR COLUMN NAME... IF WE INSERT DATA MORE THEN WHAT WE SET LIKE CHAR(2) OR VARCHAR(2)
+
+# NUMBERS
+# TINYINT: -128 TO 127 : 1 BYTE
+# SMALLINT: -32768 TO 32767 : 2 BYTE
+# MEDIUMINT: -8388608 TO 8388607 : 3 BYTE
+# INT: -2147483648 TO 2147483647 : 4 BYTE
+# BIGINT: -2^63 TO 2^63-1 : 8 BYTE
+
+
+CREATE TABLE parent (child TINYINT);
+INSERT INTO parent VALUE (-3);
+
+# IF WE CREATE TABLE USING KEYWORD UNSIGNED THEN MIN VALUE WILL START FROM 0
+# NOT ALLOWED: Out of range value for column 'child' at row 1
+DROP TABLE parent;
+CREATE TABLE parent (child TINYINT UNSIGNED);
+INSERT INTO parent VALUE (-3);
+
+# DECIMAL(TOTAL-LENGTH,DECIMAL-LENGTH)
+# FOR FINANCES WE NEED DECIMAL
+# EX DECIMAL(5,2): 231.87 ( 3 BEFORE DECIMAL AND 2 AFTER DECIMAL ) : 999.99 IS MAX YOU CAN ALLOCATE
+# 4381.3 WILL GIVE Out of range value for column : WE SAID 3 BEFORE AND 2 AFTER DECIMAL
+# 5.026 WILL TRUNCATE & ROUND OFF AFTER 2 DECIMAL AND GIVE 5.03
+
+# FLOAT & DOUBLE
+# FLOAT: 4 BYTES: 7 DIGIT PRECISION
+# DOUBLE: 8 BYTES: 15 DIGIT PRECISION
+# FOR SPEED USE DOUBLE FOR PRECISION USE BIGINT
+
+# DATES & TIME
+# DATE YYYY-MM-DD
+# TIME HH:MM:SS MAX RANGE -838:59:59 TO 838:59:59
+# DATE TIME YYYY-MM-DD HH:MM:SS
+CREATE DATABASE digital_ai;
+USE digital_ai;
+
+DROP TABLE people;
+CREATE TABLE people (
+                        name VARCHAR(100),
+                        birthdate DATE,
+                        birthtime TIME,
+                        birthdt DATETIME
+);
+
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Elton', '2000-12-25', '11:00:00', '2000-12-25 11:00:00');
+
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Lulu', '1985-04-11', '9:45:10', '1985-04-11 9:45:10');
+
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Juan', '2020-08-15', '23:59:00', '2020-08-15 23:59:00');
+
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Rahul', CURRENT_DATE(), CURRENT_TIME(), CURRENT_TIMESTAMP());
+
+# SHORTER VERSION FOR ABOVE: BOTH ARE SAME
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Choudhary', CURDATE(), CURTIME(), NOW());
+
+SELECT * FROM people;
+
+# DATE TIME FUNCTIONS
+SELECT CURDATE();
+SELECT CURTIME();
+SELECT NOW();
+
+# FORMATTING DATE
+SELECT birthdate FROM people;
+SELECT birthdate, DAY(birthdate) AS DAY FROM people;
+SELECT birthdate, DAY(birthdate) AS DAY,MONTH(birthdate) AS MONTH FROM people;
+SELECT birthdate, DAY(birthdate) AS DAY,MONTH(birthdate) AS MONTH, YEAR(birthdate) AS YEAR FROM people;
+SELECT birthdate, DAY(birthdate) AS DAY, DAYOFWEEK(birthdate) AS DAY_OF_WEEK, DAYOFMONTH(birthdate) AS DAY_OF_MONTH FROM people;
+SELECT birthdate, MONTH(birthdate) AS MONTH, MONTHNAME(birthdate) AS MONTH_NAME FROM people;
+
+# FORMATTING TIME
+SELECT birthtime FROM people;
+SELECT birthtime, HOUR(birthtime) AS BIRTH_HOUR, MINUTE(birthtime) AS BIRTH_MINUTE, SECOND(birthtime) AS BIRTH_SECOND FROM people;
+
+# FORMATTING DATETIME
+SELECT birthdt, YEAR(birthdt) AS YEAR, MONTH(birthdt) AS MONTH, DAY(birthdt) AS DAY,HOUR(birthdt) AS HOUR, MINUTE(birthdt) AS MINUTE, SECOND(birthdt) AS SECOND  FROM people;
+
+# EXCERCISE
+SELECT CONCAT(MONTHNAME(birthdt), ' ', DAY(birthdt), ' ', YEAR(birthdt)) AS birthday FROM people;
+SELECT birthdate, DATE_FORMAT(birthdate, '%a %b %e %Y') AS birthday FROM people;
