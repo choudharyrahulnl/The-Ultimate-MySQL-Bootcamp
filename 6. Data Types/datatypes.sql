@@ -41,7 +41,7 @@ INSERT INTO parent VALUE (-3);
 CREATE DATABASE digital_ai;
 USE digital_ai;
 
-DROP TABLE people;
+DROP TABLE IF EXISTS people;
 CREATE TABLE people (
                         name VARCHAR(100),
                         birthdate DATE,
