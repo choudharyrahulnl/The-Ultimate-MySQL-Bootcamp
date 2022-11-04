@@ -85,6 +85,37 @@ SELECT title AS unreviewed_series FROM reviews RIGHT JOIN series on reviews.seri
 
 SELECT genre,AVG(rating) FROM series INNER JOIN reviews r on series.id = r.series_id GROUP BY genre;
 
-SELECT first_name,last_name,COUNT(rating), MIN(rating)  AS MIN, MAX(rating)  AS MAX, AVG(rating) AS AVG FROM reviewers
-INNER JOIN reviews r on reviewers.id = r.reviewer_id
+# WITH CASE
+SELECT first_name,last_name,
+       COUNT(rating) AS rating_count,
+       IFNULL(MIN(rating),0)  AS min_rating,
+       IFNULL(MAX(rating),0)  AS max_rating,
+       ROUND(IFNULL(AVG(rating),0),2) AS avg_rating,
+       CASE
+           WHEN COUNT(rating) > 0 THEN 'ACTIVE'
+           ELSE 'INACTIVE'
+       END AS status
+FROM reviewers
+LEFT JOIN reviews r on reviewers.id = r.reviewer_id
 GROUP BY first_name, last_name;
+
+# WITH IF-ELSE
+SELECT first_name,last_name,
+       COUNT(rating) AS rating_count,
+       IFNULL(MIN(rating),0)  AS min_rating,
+       IFNULL(MAX(rating),0)  AS max_rating,
+       ROUND(IFNULL(AVG(rating),0),2) AS avg_rating,
+       IF(COUNT(rating) > 0, 'ACTIVE','INACTIVE') AS status
+FROM reviewers
+         LEFT JOIN reviews r on reviewers.id = r.reviewer_id
+GROUP BY first_name, last_name;
+
+# TWO JOINS
+SELECT title,
+       rating,
+       CONCAT(first_name,' ',last_name) AS reviewer
+FROM reviewers
+INNER JOIN reviews on reviewers.id = reviews.reviewer_id
+INNER JOIN series on reviews.series_id = series.id ORDER BY title;
+
+# INNER JOIN OR JUST JOIN - BOTH ARE SAME
